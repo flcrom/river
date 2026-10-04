@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Internal transaction helpers now reuse existing transactions instead of creating unnecessary savepoints. Callers of transactional APIs must roll back their transaction on error; applications that need partial rollback can create an explicit savepoint around the River call. Set `RIVER_USE_LEGACY_SUBTRANSACTIONS=1` (or `true`) before starting the application to restore savepoints in these helpers, including those used by River Pro. This is a temporary compatibility fallback planned for removal in a future release. [PR #1420](https://github.com/riverqueue/river/pull/1420).
+- When both the driver and pilot support it, which the PostgreSQL drivers do, the batch job completer now persists up to two full batches of job completions concurrently, improving completion throughput under heavy load. Results for the same job are still applied in order, but subscribers may receive completion events for different jobs in a different order than before, and the completer may briefly use one additional database connection. [PR #1434](https://github.com/riverqueue/river/pull/1434).
 
 ### Fixed
 
